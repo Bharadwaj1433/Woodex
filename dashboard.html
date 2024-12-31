@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .nav-buttons button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        .section {
+            display: none; /* Hide sections initially */
+            margin-top: 20px;
+        }
+        .section.active {
+            display: block; /* Show active section */
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-item .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 1px solid #ddd;
+        }
+        .order-item .item-image.error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 12px;
+            text-align: center;
+        }
+        .order-item .item-details {
+            display: flex;
+            flex-grow: 1;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-item .item-info {
+            flex-grow: 1;
+        }
+        .order-item .item-info h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .order-item .item-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome to Your Dashboard</h2>
+        
+        <div class="nav-buttons">
+            <button id="orders-button">My Orders</button>
+            <button id="account-button">Your Account</button>
+        </div>
+
+        <div id="orders-section" class="section">
+            <h3>Your Orders</h3>
+            <div id="order-items"></div>
+            <div id="no-orders-message" style="text-align: center; display: none;">
+                <p>You have no orders yet!</p>
+            </div>
+        </div>
+
+        <div id="account-section" class="section">
+            <h3>Account Details</h3>
+            <p>Email: <span id="account-email"></span></p>
+            <p>Password: ********** (hidden for security)</p>
+        </div>
+    </div>
+
+    <script>
+        // Get stored email and display it in the account section
+        const storedEmail = localStorage.getItem('email');
+        document.getElementById('account-email').textContent = storedEmail;
+
+        // Event listeners for navigation buttons
+        document.getElementById('orders-button').onclick = function() {
+            document.getElementById('orders-section').classList.add('active');
+            document.getElementById('account-section').classList.remove('active');
+            loadOrders(); // Load orders when the section is active
+        }
+
+        document.getElementById('account-button').onclick = function() {
+            document.getElementById('account-section').classList.add('active');
+            document.getElementById('orders-section').classList.remove('active');
+        }
+
+        // Show the orders section by default when the dashboard loads
+        document.getElementById('orders-section').classList.add('active');
+
+        // Load orders from local storage
+        function loadOrders() {
+            const orderItems = JSON.parse(localStorage.getItem('order')) || [];
+            const orderContainer = document.getElementById('order-items');
+            const noOrdersMessage = document.getElementById('no-orders-message');
+
+            if (orderItems.length === 0) {
+                orderContainer.style.display = 'none';
+                noOrdersMessage.style.display = 'block';
+                return;
+            }
+
+            orderContainer.innerHTML = '';
+            orderItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('order-item');
+
+                const imgHtml = `
+                    <img 
+                        src="${item.image}" 
+                        alt="${item.name}" 
+                        class="item-image"
+                        onerror="this.onerror=null; this.classList.add('error'); this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'50\' y=\'50\' font-size=\'12\' fill=\'%236c757d\' text-anchor=\'middle\' alignment-baseline=\'middle\'%3EImage not available%3C/text%3E%3C/svg%3E';"
+                    >
+                `;
+
+                itemDiv.innerHTML = `
+                    ${imgHtml}
+                    <div class="item-details">
+                        <div class="item-info">
+                            <h3>${item.name}</h3>
+                            <p>Price: ₹${item.price}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                            <p>Total: ₹${item.price * item.quantity}</p>
+                        </div>
+                    </div>
+                `;
+                orderContainer.appendChild(itemDiv);
+            });
+        }
+    </script>
+</body>
+</html>

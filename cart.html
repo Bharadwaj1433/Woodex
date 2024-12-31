@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .cart-item .item-image.error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .cart-item .item-details {
+            display: flex;
+            flex-grow: 1;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item .item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item .item-info h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .cart-item .item-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .cart-item .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cart-item .remove-btn, .cart-item .buy-now {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .cart-item .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .cart-item .remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .cart-item .buy-now {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .cart-item .buy-now:hover {
+            background-color: #27ae60;
+        }
+
+        .total-amount {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .checkout {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .checkout button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .checkout button:hover {
+            background-color: #2980b9;
+        }
+
+        .buy-all {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .buy-all:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        #delivery-form input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .submit-btn, .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+        <div id="cart-items"></div>
+        <div class="total-amount" id="total-amount">Total Amount: ₹0</div>
+        <div class="checkout">
+            <button onclick="checkout()">Proceed to Checkout</button>
+        </div>
+        <button class="buy-all" onclick="buyAll()">Buy All</button>
+    </div>
+
+    <div id="deliveryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Delivery Details</h2>
+            <form id="delivery-form">
+                <label>Name:</label>
+                <input type="text" id="name" placeholder="Your Name" required>
+                
+                <label>Address:</label>
+                <input type="text" id="address" placeholder="Your Address" required>
+                
+                <label>Mobile number:</label>
+                <input type="tel" id="mobile" placeholder="Your Phone Number" required>
+                
+                <label>Product name:</label>
+                <input type="text" id="product-name" readonly>
+                
+                <label>Product price:</label>
+                <input type="number" id="product-price" readonly>
+                
+                <label>Quantity:</label>
+                <input type="number" id="quantity" min="1">
+                
+                <button type="button" class="submit-btn" onclick="submitOrder()">Submit Order</button>
+                <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function addToCart(product, price, quantityId, imageUrl) {
+            const quantity = parseInt(document.getElementById(quantityId).value);
+            const totalPrice = price * quantity;
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            console.log('Adding to cart with image:', imageUrl);
+            
+            const existingItemIndex = cart.findIndex(item => item.name === product);
+            
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity += quantity;
+            } else {
+                cart.push({ 
+                    name: product, 
+                    price: price,
+                    quantity: quantity,
+                    image: imageUrl
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(product + ' (Qty: ' + quantity + ') added to the cart.');
+            console.log('Cart updated:', cart);
+        }
+
+        function loadCart() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartContainer = document.getElementById('cart-items');
+            const totalAmountContainer = document.getElementById('total-amount');
+
+            if (cartItems.length === 0) {
+                cartContainer.innerHTML = '<p>Your cart is empty!</p>';
+                totalAmountContainer.innerHTML = 'Total Amount: ₹0';
+                return;
+            }
+
+            let totalAmount = 0;
+            cartContainer.innerHTML = '';
+
+            cartItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('cart-item');
+
+                const itemTotalPrice = item.price * item.quantity;
+                totalAmount += itemTotalPrice;
+
+                const imgHtml = `
+                    <img 
+                        src="${item.image}" 
+                        alt="${item.name}" 
+                        class="item-image"
+                        onerror="this.onerror=null; this.classList.add('error'); this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'50\' y=\'50\' font-size=\'12\' fill=\'%236c757d\' text-anchor=\'middle\' alignment-baseline=\'middle\'%3EImage not available%3C/text%3E%3C/svg%3E';"
+                    >
+                `;
+
+                itemDiv.innerHTML = `
+                    ${imgHtml}
+                    <div class="item-details">
+                        <div class="item-info">
+                            <h3>${item.name}</h3>
+                            <p>Price: ₹${item.price}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                            <p>Total: ₹${itemTotalPrice}</p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                            <button class="buy-now" onclick="buyNow(${index})">Buy Now</button>
+                        </div>
+                    </div>
+                `;
+                cartContainer.appendChild(itemDiv);
+            });
+
+            totalAmountContainer.innerHTML = `Total Amount: ₹${totalAmount}`;
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function checkout() {
+            alert('Proceeding to checkout...');
+        }
+
+        function buyAll() {
+            alert('Buying all items in the cart...');
+        }
+
+        function buyNow(index) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const item = cart[index];
+            if (item) {
+                document.getElementById('deliveryModal').style.display = 'block';
+                document.getElementById('product-name').value = item.name;
+                document.getElementById('product-price').value = item.price;
+                document.getElementById('quantity').value = item.quantity;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('deliveryModal').style.display = 'none';
+        }
+
+        function debugCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            console.log('Current cart contents:', cart);
+        }
+
+        loadCart();
+        debugCart();
+    </script>
+</body>
+</html>

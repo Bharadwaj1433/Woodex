@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Deco Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .filter-option input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .filter-option label {
+            color: #666;
+        }
+        .price-range {
+            margin: 8px 0;
+            color: #666;
+            cursor: pointer;
+        }
+        .price-range:hover {
+            color: #3498db;
+        }
+        .star-rating {
+            color: #ffd700;
+            margin-right: 5px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .item {
+            display: flex;
+            margin: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        .item img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .details {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .details h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .price-info {
+            margin: 10px 0;
+        }
+        .price-info span {
+            display: block;
+            font-size: 14px;
+        }
+        .discount {
+            color: red;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .quantity input {
+            width: 50px;
+            margin-left: 10px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .buttons button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .add-to-cart {
+            background-color: #3498db;
+            color: white;
+        }
+        .add-to-cart:hover {
+            background-color: #2980b9;
+        }
+        .add-to-wishlist {
+            background-color: #d8fe00;
+            color: white;
+        }
+        .add-to-wishlist:hover {
+            background-color: #fffb00;
+        }
+        .buy-now {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .buy-now:hover {
+            background-color: #27ae60;
+        }
+        .delivery-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1200;
+        }
+        .delivery-form input, .delivery-form textarea, .delivery-form select {
+            display: block;
+            width: 90%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .delivery-form button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cancel-button {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .image-modal img {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .share-buttons {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .share-buttons a {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+        }
+        .share-buttons img {
+            width: 100%; /* Use full width of the container */
+            height: auto; /* Maintain aspect ratio */
+        }
+        .share-icon {
+            color: #28a745; /* Set a color for the sharing arrow */
+            font-size: 20px; /* Adjust size if necessary */
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center; margin-top: 20px;">Art Deco Home</h1>
+    <div class="sidebar">
+        <div class="filter-section">
+            <h3>Customer Reviews</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="rating4" onchange="filterProducts()">
+                <label for="rating4">⭐⭐⭐⭐ & Up</label>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h3>Price</h3>
+            <div class="price-range" onclick="filterByPrice(0, 1000)">Under ₹1,000</div>
+            <div class="price-range" onclick="filterByPrice(1000, 5000)">₹1,000 - ₹5,000</div>
+            <div class="price-range" onclick="filterByPrice(5000, 10000)">₹5,000 - ₹10,000</div>
+            <div class="price-range" onclick="filterByPrice(10000, 20000)">₹10,000 - ₹20,000</div>
+            <div class="price-range" onclick="filterByPrice(20000, Infinity)">Over ₹20,000</div>
+        </div>
+        <div class="filter-section">
+            <h3>Deals & Discounts</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="allDiscounts" onchange="filterProducts()">
+                <label for="allDiscounts">All Discounts</label>
+            </div>
+            <div class="filter-option">
+                <input type="checkbox" id="todayDeals" onchange="filterProducts()">
+                <label for="todayDeals">Today's Deals</label>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h3>Pay On Delivery</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="pod" onchange="filterProducts()">
+                <label for="pod">Eligible for Pay On Delivery</label>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Product 1 -->
+        <div class="item" data-name="WOODEX Apple Ceramic Pot - Big (Dark Blue)" data-price="557">
+            <img src="https://m.media-amazon.com/images/I/61YbOx7ObKL._SL1000_.jpg" alt="WOODEX Apple Ceramic Pot - Big (Dark Blue)" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>WOODEX Apple Ceramic Pot - Big (Dark Blue)</h3>
+                <p>This is a 15x15x15 cm pot, great for all plants, with a drainage hole, perfect for home or office decoration.</p>
+                <div class="price-info">
+                    <span>Price: ₹<span id="price1">557</span></span>
+                    <span>MRP: <s>₹895</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹338.00 (-38% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity1">Quantity:</label>
+                    <input type="number" id="quantity1" value="1" min="1" onchange="updatePrice('price1', 557, 'quantity1')">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('WOODEX Apple Ceramic Pot - Big (Dark Blue)', 557, 'quantity1')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('WOODEX Apple Ceramic Pot - Big (Dark Blue)', 557, 'quantity1')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('WOODEX Apple Ceramic Pot - Big (Dark Blue)', 557, 'quantity1')">❤️</button>
+                    <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                    <div class="share-buttons" id="shareOptions1">
+                        <a href="https://wa.me/?text=Check out this product: WOODEX Apple Ceramic Pot - Big (Dark Blue) - ₹557 https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                        <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="item" data-name="WOODEX Orbit Wooden Planter - Round Pot for Indoor" data-price="765">
+            <img src="https://m.media-amazon.com/images/I/61z2dWa5qgL.SL1000.jpg" alt="WOODEX Orbit Wooden Planter" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>WOODEX Orbit Wooden Planter - Round Pot for Indoor</h3>
+                <p>This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.</p>
+                <div class="price-info">
+                    <span>Price: ₹<span id="price2">765</span></span>
+                    <span>MRP: <s>₹1250</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹485.00 (-38% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity2">Quantity:</label>
+                    <input type="number" id="quantity2" value="1" min="1" onchange="updatePrice('price2', 765, 'quantity2')">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('WOODEX Orbit Wooden Planter - Round Pot for Indoor', 765, 'quantity2')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('WOODEX Orbit Wooden Planter - Round Pot for Indoor', 765, 'quantity2')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('WOODEX Orbit Wooden Planter - Round Pot for Indoor', 765, 'quantity2')">❤️</button>
+                    <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                    <div class="share-buttons" id="shareOptions2">
+                        <a href="https://wa.me/?text=Check out this product: WOODEX Orbit Wooden Planter - Round Pot for Indoor - ₹765 https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                        <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="item" data-name="WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants" data-price="1,234">
+            <img src="https://m.media-amazon.com/images/I/61lSPolu42L.SL1000.jpg" alt="WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants</h3>
+                <p>Set of 2 eco-friendly, weather-resistant wooden planters made from Acacia and Mango wood with a sleek design.</p>
+                <div class="price-info">
+                    <span>Price: ₹<span id="price3">1,234</span></span>
+                    <span>MRP: <s>₹1,999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹765.00 (-38% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity3">Quantity:</label>
+                    <input type="number" id="quantity3" value="1" min="1" onchange="updatePrice('price3', 1234, 'quantity3')">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants', 1234, 'quantity3')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants', 1234, 'quantity3')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants', 1234, 'quantity3')">❤️</button>
+                    <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                    <div class="share-buttons" id="shareOptions3">
+                        <a href="https://wa.me/?text=Check out this product: WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants - ₹1,234 https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                        <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 4 -->
+        <div class="item" data-name="Polyresin Pot Without Plant Pack Of 4, Multicolour" data-price="₹595">
+            <img src="https://m.media-amazon.com/images/I/51QoMwxp6NL.SX300_SY300_QL70_FMwebp.jpg" alt="Polyresin Pot Without Plant Pack Of 4, Multicolour" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Polyresin Pot Without Plant Pack Of 4, Multicolour</h3>
+                <p>This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.</p>
+                <div class="price-info">
+                    <span>Price: ₹<span id="price4">595</span></span>
+                    <span>MRP: <s>₹999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹404.00 (-40% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity4">Quantity:</label>
+                    <input type="number" id="quantity4" value="1" min="1" onchange="updatePrice('price4', 595, 'quantity4')">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Polyresin Pot Without Plant Pack Of 4, Multicolour', 595, 'quantity4')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Polyresin Pot Without Plant Pack Of 4, Multicolour', 595, 'quantity4')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Polyresin Pot Without Plant Pack Of 4, Multicolour', 595, 'quantity4')">❤️</button>
+                    <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                    <div class="share-buttons" id="shareOptions4">
+                        <a href="https://wa.me/?text=Check out this product: Polyresin Pot Without Plant Pack Of 4, Multicolour - ₹595 https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                        <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 5 -->
+        <div class="item" data-name="Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor" data-price="1424">
+            <img src="https://m.media-amazon.com/images/I/71-lcge75SL.SL1440.jpg" alt="Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor</h3>
+                <p>This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.</p>
+                <div class="price-info">
+                    <span>Price: ₹<span id="price5">1,424</span></span>
+                    <span>MRP: <s>₹3,999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹2,575.00 (-64% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity5">Quantity:</label>
+                    <input type="number" id="quantity5" value="1" min="1" onchange="updatePrice('price5', 1424, 'quantity5')">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor', 1424, 'quantity5')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor', 1424, 'quantity5')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor', 1424, 'quantity5')">❤️</button>
+                    <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                    <div class="share-buttons" id="shareOptions5">
+                        <a href="https://wa.me/?text=Check out this product: Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor - ₹1,424 https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                        <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Products will be dynamically populated here -->
+    </div>
+
+    <!-- Image Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="image-modal" id="imageModal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" src="" alt="">
+    </div>
+
+    <!-- Delivery Form -->
+    <div class="overlay" id="formOverlay"></div>
+    <div class="delivery-form" id="deliveryForm">
+        <h2>Delivery Details</h2>
+        <p><strong>Product:</strong> <span id="formProduct"></span></p>
+        <p><strong>Price:</strong> ₹<span id="formPrice"></span></p>
+        <p><strong>Quantity:</strong> <span id="formQuantity"></span></p>
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" placeholder="Enter your full name" required>
+        <label for="state">State:</label>
+        <input type="text" id="state" placeholder="State" required>
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="City" required>
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" rows="3" placeholder="Enter delivery address" required></textarea>
+        <label for="zip">Zip code:</label>
+        <input type="text" id="zip" placeholder="Zip Code" required>
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="phone" placeholder="Enter phone number" required>
+        <label for="payment">Payment Method:</label>
+        <select id="payment">
+            <option value="cod">Cash on Delivery (COD)</option>
+            <option value="card">Credit/Debit Card</option>
+            <option value="upi">UPI Payment</option>
+        </select>
+        <button type="submit" onclick="submitOrder()">Submit Order</button>
+        <button class="cancel-button" onclick="closeForm()">Cancel</button>
+    </div>
+
+    <script>
+        // Product details after filtering
+        const products = [
+            {
+                name: "WOODEX Apple Ceramic Pot - Big (Dark Blue)",
+                price: 557,
+                rating: 5,
+                discount: true,
+                description:"This is a 15x15x15 cm pot, great for all plants, with a drainage hole, perfect for home or office decoration.",
+                image: "https://m.media-amazon.com/images/I/61YbOx7ObKL._SL1000_.jpg"
+            },
+            {
+                name: "WOODEX Orbit Wooden Planter - Round Pot for Indoor",
+                price: 765,
+                rating: 5,
+                discount: true,
+                description:"This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.",
+                image: "https://m.media-amazon.com/images/I/61z2dWa5qgL.SL1000.jpg"
+            },
+            {
+                name: "WOODEX Gradient Wooden Planter - Pots for Indoor/Outdoor Plants",
+                price: 1234,
+                rating: 4,
+                discount: false,
+                description:"Set of 2 eco-friendly, weather-resistant wooden planters made from Acacia and Mango wood with a sleek design.",
+                image: "https://m.media-amazon.com/images/I/61lSPolu42L.SL1000.jpg"
+            },
+            {
+                name: "Polyresin Pot Without Plant Pack Of 4, Multicolour",
+                price: 595,
+                rating: 4,
+                discount: true,
+                description:"This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.",
+                image: "https://m.media-amazon.com/images/I/51QoMwxp6NL.SX300_SY300_QL70_FMwebp.jpg"
+            },
+            {
+                name: "Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor",
+                price: 1424,
+                rating: 5,
+                discount: true,
+                description:"This set has two round wooden planters made from strong Acacia and Mango wood. They are weather-resistant, eco-friendly, and have an elegant design for home decor.",
+                image: "https://m.media-amazon.com/images/I/71-lcge75SL.SL1440.jpg"
+            },
+        ];
+
+        function filterProducts() {
+            const minRating = document.getElementById('rating4').checked ? 4 : 0;
+            const allDiscounts = document.getElementById('allDiscounts').checked;
+            const todayDeals = document.getElementById('todayDeals').checked;
+
+            const filteredProducts = products.filter(product => {
+                return (
+                    product.rating >= minRating &&
+                    (!todayDeals || product.discount) &&
+                    (!allDiscounts || product.discount)
+                );
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        function filterByPrice(min, max) {
+            const filteredProducts = products.filter(product => {
+                return product.price >= min && product.price <= max;
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        function displayProducts(filteredProducts) {
+            const productContainer = document.querySelector('.container');
+            productContainer.innerHTML = ''; // Clear current products
+
+            // Render filtered products
+            filteredProducts.forEach(product => {
+                const productHTML = `
+                    <div class="item" data-price="${product.price}" data-rating="${product.rating}">
+                        <img src="${product.image}" alt="${product.name}" onclick="openModal(this.src, this.alt)">
+                        <div class="details">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <div class="price-info">
+                                <span>Price: ₹<span class="item-price">${product.price}</span></span>
+                                <span>MRP: <s>₹${product.price * 2}</s></span>
+                                <span>${'★'.repeat(product.rating)}${'☆'.repeat(5 - product.rating)}</span>
+                                <span class="discount">${product.discount ? 'Discount Available' : 'No Discount'}</span>
+                            </div>
+                            <div class="quantity">
+                                <label for="quantity">Quantity:</label>
+                                <input class="quantity-input" type="number" value="1" min="1" onchange="updatePrice(this, ${product.price})">
+                            </div>
+                            <div class="buttons">
+                                <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price}, this.closest('.item').querySelector('.quantity-input'))">Add to Cart</button>
+                                <button class="buy-now" onclick="openForm('${product.name}', ${product.price}, this.closest('.item').querySelector('.quantity-input'))">Buy Now</button>
+                                <button class="add-to-wishlist" onclick="addToWishlist('${product.name}', ${product.price}, this.closest('.item'))">❤️</button>
+                                <button class="share-button" onclick="toggleShareOptions(this)"><span class="share-icon">↗️</span></button> <!-- Sharing curve arrow symbol -->
+                                <div class="share-buttons" id="shareOptions">
+                                    <a href="https://wa.me/?text=Check out this product: ${product.name} - ₹${product.price} https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp_icon_2016.svg" alt="WhatsApp"></a>
+                                    <a href="https://www.instagram.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></a>
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productContainer.innerHTML += productHTML; // Append product HTML to container
+            });
+
+            if (filteredProducts.length === 0) {
+                productContainer.innerHTML = '<p>No products found matching your criteria.</p>';
+            }
+        }
+
+        function toggleShareOptions(button) {
+            const shareButtons = button.nextElementSibling; // Select the share buttons
+            shareButtons.style.display = shareButtons.style.display === 'flex' ? 'none' : 'flex'; // Toggle visibility
+        }
+
+        function updatePrice(quantityInput, price) {
+            const quantity = parseInt(quantityInput.value) || 1; // Get the current quantity
+            const updatedPrice = price * quantity; // Calculate total price
+            const priceElement = quantityInput.closest('.item').querySelector('.item-price'); // Locate the price element
+            priceElement.innerText = updatedPrice; // Update the displayed price
+        }
+
+        function addToCart(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1; // Ensure quantity is a number
+            const totalPrice = price * quantity;
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            const existingItemIndex = cart.findIndex(item => item.name === product);
+            
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity += quantity;
+                cart[existingItemIndex].price += totalPrice; // Update total price for quantity
+            } else {
+                cart.push({ name: product, price: totalPrice, quantity: quantity });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(product + ' (Qty: ' + quantity + ') added to the cart.');
+        }
+
+        function addToWishlist(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1; // Capture quantity
+            const totalPrice = price * quantity; // Calculate total price
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            
+            const existingItemIndex = wishlist.findIndex(item => item.name === product);
+            
+            if (existingItemIndex === -1) {
+                wishlist.push({ name: product, price: price, quantity: quantity, totalPrice: totalPrice });
+                alert(product + ' (Qty: ' + quantity + ', Total: ₹' + totalPrice + ') added to your wishlist.');
+            } else {
+                alert(product + ' is already in your wishlist.');
+            }
+            
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            displayWishlist(); // Update wishlist display
+        }
+
+        function displayWishlist() {
+            const wishlistContainer = document.getElementById('wishlist-items');
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            wishlistContainer.innerHTML = ''; // Clear current wishlist items
+
+            if (wishlist.length === 0) {
+                wishlistContainer.innerHTML = '<p>Your Wishlist is empty!</p>';
+                return;
+            }
+
+            wishlist.forEach(item => {
+                const itemHTML = `
+                    <div class="wishlist-item">
+                        <div>${item.name} - Qty: ${item.quantity} - Total: ₹${item.totalPrice}</div>
+                    </div>
+                `;
+                wishlistContainer.innerHTML += itemHTML; // Append each item in the wishlist
+            });
+        }
+
+        function openForm(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1;
+            const totalPrice = price * quantity;
+
+            document.getElementById('formProduct').textContent = product;
+            document.getElementById('formPrice').textContent = totalPrice;
+            document.getElementById('formQuantity').textContent = quantity;
+
+            document.getElementById('deliveryForm').style.display = 'block';
+            document.getElementById('formOverlay').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function openModal(src, alt) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalImage').alt = alt;
+            document.getElementById('imageModal').style.display = 'flex';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeForm() {
+            document.getElementById('deliveryForm').style.display = 'none';
+            document.getElementById('formOverlay').style.display = 'none';
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zip = document.getElementById('zip').value;
+            const phone = document.getElementById('phone').value;
+            const payment = document.getElementById('payment').value;
+
+            if (name && address && city && state && zip && phone && payment) {
+                alert(`Order has been placed successfully!\nName: ${name}\nAddress: ${address}\nCity: ${city}\nState: ${state}\nZip: ${zip}\nPhone: ${phone}\nPayment: ${payment}`);
+                closeForm();
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        // Initialize product display on page load
+        window.onload = () => {
+            displayProducts(products);
+        };    
+    </script>
+</body>
+</html>

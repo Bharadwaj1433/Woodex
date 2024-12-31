@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bed & Mattress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .filter-option input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .filter-option label {
+            color: #666;
+        }
+        .price-range {
+            margin: 8px 0;
+            color: #666;
+            cursor: pointer;
+        }
+        .price-range:hover {
+            color: #3498db;
+        }
+        .star-rating {
+            color: #ffd700;
+            margin-right: 5px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .item {
+            display: flex;
+            margin: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        .item img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .details {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .details h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .price-info {
+            margin: 10px 0;
+        }
+        .price-info span {
+            display: block;
+            font-size: 14px;
+        }
+        .discount {
+            color: red;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .quantity input {
+            width: 50px;
+            margin-left: 10px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .add-to-cart {
+            background-color: #3498db;
+            color: white;
+        }
+        .add-to-cart:hover {
+            background-color: #2980b9;
+        }
+        .add-to-wishlist {
+            background-color: #d8fe00;
+            color: white;
+        }
+        .add-to-wishlist:hover {
+            background-color: #fffb00;
+        }
+        .buy-now {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .buy-now:hover {
+            background-color: #27ae60;
+        }
+        .delivery-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1200;
+        }
+        .delivery-form input, .delivery-form textarea, .delivery-form select {
+            display: block;
+            width: 90%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .delivery-form button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cancel-button {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .image-modal img {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center; margin-top: 20px;">Bed & Mattress</h1>
+    <div class="sidebar">
+        <div class="filter-section">
+            <h3>Customer Reviews</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="rating4" onchange="filterProducts()">
+                <label for="rating4">⭐⭐⭐⭐ & Up</label>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h3>Price</h3>
+            <div class="price-range" onclick="filterByPrice(0, 1000)">Under ₹1,000</div>
+            <div class="price-range" onclick="filterByPrice(1000, 5000)">₹1,000 - ₹5,000</div>
+            <div class="price-range" onclick="filterByPrice(5000, 10000)">₹5,000 - ₹10,000</div>
+            <div class="price-range" onclick="filterByPrice(10000, 20000)">₹10,000 - ₹20,000</div>
+            <div class="price-range" onclick="filterByPrice(20000, Infinity)">Over ₹20,000</div>
+        </div>
+        <div class="filter-section">
+            <h3>Deals & Discounts</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="allDiscounts" onchange="filterProducts()">
+                <label for="allDiscounts">All Discounts</label>
+            </div>
+            <div class="filter-option">
+                <input type="checkbox" id="todayDeals" onchange="filterProducts()">
+                <label for="todayDeals">Today's Deals</label>
+            </div>
+        </div>
+        <div class="filter-section">
+            <h3>Pay On Delivery</h3>
+            <div class="filter-option">
+                <input type="checkbox" id="pod" onchange="filterProducts()">
+                <label for="pod">Eligible for Pay On Delivery</label>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    <!-- Product 1 -->
+        <div class="item" data-name="Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)" data-price="3,956">
+            <img src="https://www.loomandneedles.com/images/product/173/doual001-.jpg" alt="Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)</h3>
+                <p>This Dual Hard & Soft Mattress is Reversible Mattress. This  Mattress is Multi Layered and has 5 Years of Warranty. Available in 4,5,6,8 inches of Thickness and Door Delivered to all major cities including Bangalore, Chennai, Mumbai, Delhi, Hyderabad.</p>
+                <div class="price-info">
+                    <span>Price: ₹3,956</span>
+                    <span>MRP: <s>₹8,358</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹4,402 (53% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity1">Quantity:</label>
+                    <input type="number" id="quantity1" value="1" min="1">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)', 3956, 'quantity1')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)', 3956, 'quantity1')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)', 3956, 'quantity1')">❤️</button>
+                </div>
+            </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="item" data-name="LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches" data-price="5,546">
+            <img src="https://m.media-amazon.com/images/I/81tSp-MsYiL._SL1500_.jpg" alt="LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches</h3>
+                <p>This 3 Layered Mattress Comes With 1" Cooling-Gel Memory Foam That Fits Your Body Perfectly And Absorbs 95% Of Your Body Pressure And Rest Combination Of High Density Support And Transition Foam Which Gives Your Body Perfect Support From Head To Toe And Creates A Medium-Firm Feel.</p>
+                <div class="price-info">
+                    <span>Price: ₹5,546</span>
+                    <span>MRP: <s>₹10,999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹5,453.00 (65% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity2">Quantity:</label>
+                    <input type="number" id="quantity2" value="1" min="1">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches', 5546, 'quantity2')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches', 5546, 'quantity2')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches', 5546, 'quantity2')">❤️</button>
+                </div>
+            </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="item" data-name="Blumuno Prima Rollaway Folding Bed with Wheels (Includes 3.5' Premium Foldable Mattress) Single Comfortable Bed/Metal Bed/Extra Guest Bed (Black Premium Powder Coating)" data-price="10,999">
+            <img src="https://m.media-amazon.com/images/I/81A0LHdZa8L._SL1500_.jpg" alt="Blumuno Prima Rollaway Folding Bed with Wheels (Includes 3.5' Premium Foldable Mattress) Single Comfortable Bed/Metal Bed/Extra Guest Bed (Black Premium Powder Coating)" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Blumuno Prima Rollaway Folding Bed with Wheels (Includes 3.5' Premium Foldable Mattress) Single Comfortable Bed/Metal Bed/Extra Guest Bed</h3>
+                <p>This folding bed is so convenient and comfortable. Saves a lot of space. Very very functional and comes handy if you have guests staying over. Exceptional utility!!! Great product!!!</p>
+                <div class="price-info">
+                    <span>Price: ₹10,999</span>
+                    <span>MRP: <s>₹21,999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹11,000.00 (50% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity2">Quantity:</label>
+                    <input type="number" id="quantity2" value="1" min="1">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Blumuno Prima Rollaway Folding Bed with Wheels | Includes 3.5* Premium Foldable Mattress Single Comfortable Bed/Metal Bed/Extra Guest Bed Black Premium Powder Coating', 109994, 'quantity2')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Blumuno Prima Rollaway Folding Bed with Wheels | Includes 3.5* Premium Foldable Mattress Single Comfortable Bed/Metal Bed/Extra Guest Bed Black Premium Powder Coating', 10999, 'quantity2')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Blumuno Prima Rollaway Folding Bed with Wheels | Includes 3.5* Premium Foldable Mattress Single Comfortable Bed/Metal Bed/Extra Guest Bed Black Premium Powder Coating', 109994, 'quantity2')">❤️</button>
+                </div>
+            </div>
+        </div>
+        <!-- Product 4 -->
+        <div class="item" data-name="Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)" data-price="₹15,010">
+            <img src="https://m.media-amazon.com/images/I/71lbOOzwdBL._SL1000_.jpg" alt="Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)</h3>
+                <p>Mattress made from quality Cotton with the latest technological innovations provide excellent back support while engulfing you in its cocoon and letting you enjoy restful, deep sleep.It has made to use both the sides and gives the same comfort as new.After the mattress is used for 6 to 7 days consecutively then the mattress settles down to its menione shape and size. Mattress will sag from 5 Inch thickness with use.</p>
+                <div class="price-info">
+                    <span>Price:  ₹15,010</span>
+                    <span>MRP: <s>₹22,999</s></span>
+                    <span>★★★★★</span>
+                    <span class="discount">You Save: ₹7,989.00 (30%% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity2">Quantity:</label>
+                    <input type="number" id="quantity2" value="1" min="1">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)', 15010, 'quantity2')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)', 15010, 'quantity2')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)', 15010, 'quantity2')">❤️</button>
+                </div>
+            </div>
+        </div>
+        <!-- Product 5 -->
+        <div class="item" data-name="Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)" data-price="6,998">
+            <img src="https://m.media-amazon.com/images/I/71nzcKeDWeL._SL1280_.jpg" alt="Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)" onclick="openModal(this.src, this.alt)">
+            <div class="details">
+                <h3>Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)</h3>
+                <p>By Relieving The Pressure Points, Pocket Coil Mattresses Allow Blood & Much Needed Oxygen to Circulate & Flow More Efficiently Throughout Our Bodies.
+                    Warranty: 10 years Manufacturers Warranty.
+                    Shipping: Direct from the Factory to your doorstep.</p>
+                <div class="price-info">
+                    <span>Price:  ₹6,998</span>
+                    <span>MRP: <s>₹11,665</s></span>
+                    <span>★★★☆☆</span>
+                    <span class="discount">You Save: ₹4,667.00 (40% off)</span>
+                </div>
+                <div class="quantity">
+                    <label for="quantity2">Quantity:</label>
+                    <input type="number" id="quantity2" value="1" min="1">
+                </div>
+                <div class="buttons">
+                    <button class="add-to-cart" onclick="addToCart('Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)', 6998, 'quantity2')">Add to Cart</button>
+                    <button class="buy-now" onclick="openForm('Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)', 6998, 'quantity2')">Buy Now</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('Forwish Mattress Pocketed Spring with Gel Infused Memory Form top 10inch (72x36)', 6998, 'quantity2')">❤️</button>
+                </div>
+            </div>
+        </div>
+        <!-- Products will be dynamically populated here -->
+    </div>
+
+    <!-- Image Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="image-modal" id="imageModal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" src="" alt="">
+    </div>
+
+    <!-- Delivery Form -->
+    <div class="overlay" id="formOverlay"></div>
+    <div class="delivery-form" id="deliveryForm">
+        <h2>Delivery Details</h2>
+        <p><strong>Product:</strong> <span id="formProduct"></span></p>
+        <p><strong>Price:</strong> ₹<span id="formPrice"></span></p>
+        <p><strong>Quantity:</strong> <span id="formQuantity"></span></p>
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" placeholder="Enter your full name" required>
+        <label for="state">State:</label>
+        <input type="text" id="state" placeholder="State" required>
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="City" required>
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" rows="3" placeholder="Enter delivery address" required></textarea>
+        <label for="zip">Zip code:</label>
+        <input type="text" id="zip" placeholder="Zip Code" required>
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="phone" placeholder="Enter phone number" required>
+        <label for="payment">Payment Method:</label>
+        <select id="payment">
+            <option value="cod">Cash on Delivery (COD)</option>
+            <option value="card">Credit/Debit Card</option>
+            <option value="upi">UPI Payment</option>
+        </select>
+        <button type="submit" onclick="submitOrder()">Submit Order</button>
+        <button class="cancel-button" onclick="closeForm()">Cancel</button>
+    </div>
+
+    <script>
+        //Product details after filtering
+        const products = [
+    {
+        name: "Dual Comfort Hard & Soft(72x36x4 inch) / (182.88x91.44x10.16cm)",
+        price: 3956,
+        rating: 5,
+        discount: true,
+        description:"This Dual Hard & Soft Mattress is Reversible Mattress. This  Mattress is Multi Layered and has 5 Years of Warranty. Available in 4,5,6,8 inches of Thickness and Door Delivered to all major cities including Bangalore, Chennai, Mumbai, Delhi, Hyderabad.",
+        image: "https://www.loomandneedles.com/images/product/173/doual001-.jpg"
+    },
+    {
+        name: "LOOM & NEEDLES Folding & Tri-fold Memory Foam Mattress | Foldable Bed | Guest beds | Floor Mattress | Travel Mattress | Camp Portable Bed 72x36x4 Inches",
+        price: 5546,
+        rating: 5,
+        discount: true,
+        description:"This 3 Layered Mattress Comes With 1' Cooling-Gel Memory Foam That Fits Your Body Perfectly And Absorbs 95% Of Your Body Pressure And Rest Combination Of High Density Support And Transition Foam Which Gives Your Body Perfect Support From Head To Toe And Creates A Medium-Firm Feel.",
+        image: "https://m.media-amazon.com/images/I/81tSp-MsYiL._SL1500_.jpg"
+    },
+    {
+        name: "Blumuno Prima Rollaway Folding Bed with Wheels (Includes 3.5' Premium Foldable Mattress) Single Comfortable Bed/Metal Bed/Extra Guest Bed",
+        price: 10999,
+        rating: 4,
+        discount: false,
+        description:"This folding bed is so convenient and comfortable. Saves a lot of space. Very very functional and comes handy if you have guests staying over. Exceptional utility!!! Great product!!!",
+        image: "https://m.media-amazon.com/images/I/81A0LHdZa8L._SL1500_.jpg"
+
+    },
+    {
+        name: "Super Sleep Medium Soft Single Bed Cotton Folding Mattress/Gadda for Students, PG, Hostel, Picnic (White Cotton, 4 x 6)",
+        price: 15010,
+        rating: 4,
+        discount: true,
+        description:"Mattress made from quality Cotton with the latest technological innovations provide excellent back support while engulfing you in its cocoon and letting you enjoy restful, deep sleep.It has made to use both the sides and gives the same comfort as new.After the mattress is used for 6 to 7 days consecutively then the mattress settles down to its menione shape and size. Mattress will sag from 5 Inch thickness with use.",
+        image: "https://m.media-amazon.com/images/I/71lbOOzwdBL._SL1000_.jpg"
+    },
+    {
+        name: "Trendy Decor Attractive Multi Tired Plant Stand Indoor/Outdoor",
+        price: 6998,
+        rating: 5,
+        discount: true,
+        description:"By Relieving The Pressure Points, Pocket Coil Mattresses Allow Blood & Much Needed Oxygen to Circulate & Flow More Efficiently Throughout Our Bodies.Warranty: 10 years Manufacturers Warranty.Shipping: Direct from the Factory to your doorstep.",
+        image: "https://m.media-amazon.com/images/I/71nzcKeDWeL._SL1280_.jpg"
+    },
+];
+
+        function filterProducts() {
+            const minRating = document.getElementById('rating4').checked ? 4 : 0;
+            const allDiscounts = document.getElementById('allDiscounts').checked;
+            const todayDeals = document.getElementById('todayDeals').checked;
+
+            const filteredProducts = products.filter(product => {
+                return (
+                    product.rating >= minRating &&
+                    (!todayDeals || product.discount) &&
+                    (!allDiscounts || product.discount)
+                );
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        function filterByPrice(min, max) {
+            const filteredProducts = products.filter(product => {
+                return product.price >= min && product.price <= max;
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        function displayProducts(filteredProducts) {
+            const productContainer = document.querySelector('.container');
+            productContainer.innerHTML = ''; // Clear current products
+
+            // Render filtered products
+            filteredProducts.forEach(product => {
+                const productHTML = `
+                    <div class="item" data-price="${product.price}" data-rating="${product.rating}">
+                        <img src="${product.image}" alt="${product.name}" onclick="openModal(this.src, this.alt)">
+                        <div class="details">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <div class="price-info">
+                                <span>Price: ₹<span class="item-price">${product.price}</span></span>
+                                <span>MRP: <s>₹${product.price * 2}</s></span>
+                                <span>${'★'.repeat(product.rating)}${'☆'.repeat(5 - product.rating)}</span>
+                                <span class="discount">${product.discount ? 'Discount Available' : 'No Discount'}</span>
+                            </div>
+                            <div class="quantity">
+                                <label for="quantity">Quantity:</label>
+                                <input class="quantity-input" type="number" value="1" min="1" onchange="updatePrice(this, ${product.price})">
+                            </div>
+                            <div class="buttons">
+                                <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price}, this.closest('.item').querySelector('.quantity-input'))">Add to Cart</button>
+                                <button class="buy-now" onclick="openForm('${product.name}', ${product.price}, this.closest('.item').querySelector('.quantity-input'))">Buy Now</button>
+                                <button class="add-to-wishlist" onclick="addToWishlist('${product.name}', ${product.price}, this.closest('.item'))">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productContainer.innerHTML += productHTML; // Append product HTML to container
+            });
+
+            if (filteredProducts.length === 0) {
+                productContainer.innerHTML = '<p>No products found matching your criteria.</p>';
+            }
+        }
+
+        function updatePrice(quantityInput, price) {
+            const quantity = parseInt(quantityInput.value) || 1; // Get the current quantity
+            const updatedPrice = price * quantity; // Calculate total price
+            const priceElement = quantityInput.closest('.item').querySelector('.item-price'); // Locate the price element
+            priceElement.innerText = updatedPrice; // Update the displayed price
+        }
+
+        function addToCart(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1; // Ensure quantity is a number
+            const totalPrice = price * quantity;
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            const existingItemIndex = cart.findIndex(item => item.name === product);
+            
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity += quantity;
+                cart[existingItemIndex].price += totalPrice; // Update total price for quantity
+            } else {
+                cart.push({ name: product, price: totalPrice, quantity: quantity });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(product + ' (Qty: ' + quantity + ') added to the cart.');
+        }
+        function addToWishlist(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1; // Capture quantity
+            const totalPrice = price * quantity; // Calculate total price
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            
+            const existingItemIndex = wishlist.findIndex(item => item.name === product);
+            
+            if (existingItemIndex === -1) {
+                wishlist.push({ name: product, price: price, quantity: quantity, totalPrice: totalPrice });
+                alert(product + ' (Qty: ' + quantity + ', Total: ₹' + totalPrice + ') added to your wishlist.');
+            } else {
+                alert(product + ' is already in your wishlist.');
+            }
+            
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            displayWishlist(); // Update wishlist display
+        }
+
+        function displayWishlist() {
+            const wishlistContainer = document.getElementById('wishlist-items');
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            wishlistContainer.innerHTML = ''; // Clear current wishlist items
+
+            if (wishlist.length === 0) {
+                wishlistContainer.innerHTML = '<p>Your Wishlist is empty!</p>';
+                return;
+            }
+
+            wishlist.forEach(item => {
+                const itemHTML = `
+                    <div class="wishlist-item">
+                        <div>${item.name} - Qty: ${item.quantity} - Total: ₹${item.totalPrice}</div>
+                    </div>
+                `;
+                wishlistContainer.innerHTML += itemHTML; // Append each item in the wishlist
+            });
+        }
+
+        function openForm(product, price, quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 1;
+            const totalPrice = price * quantity;
+
+            document.getElementById('formProduct').textContent = product;
+            document.getElementById('formPrice').textContent = totalPrice;
+            document.getElementById('formQuantity').textContent = quantity;
+
+            document.getElementById('deliveryForm').style.display = 'block';
+            document.getElementById('formOverlay').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function openModal(src, alt) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalImage').alt = alt;
+            document.getElementById('imageModal').style.display = 'flex';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeForm() {
+            document.getElementById('deliveryForm').style.display = 'none';
+            document.getElementById('formOverlay').style.display = 'none';
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zip = document.getElementById('zip').value;
+            const phone = document.getElementById('phone').value;
+            const payment = document.getElementById('payment').value;
+
+            if (name && address && city && state && zip && phone && payment) {
+                alert(`Order has been placed successfully!\nName: ${name}\nAddress: ${address}\nCity: ${city}\nState: ${state}\nZip: ${zip}\nPhone: ${phone}\nPayment: ${payment}`);
+                closeForm();
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        // Initialize product display on page load
+        window.onload = () => {
+            displayProducts(products);
+        };    
+    </script>
+</body>
+</html>

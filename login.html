@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <style>
+    /* Existing styles remain unchanged */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    
+    .login-container {
+      max-width: 500px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form input {
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    form a {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form button {
+      background-color: #007bff;
+      color: white;
+      padding: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .create-account {
+      display: block;
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .social-login {
+      display: flex;
+      justify-content: space-around;
+      margin: 1.5rem 0;
+    }
+
+    .social-login button {
+      width: 48%;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    .google-btn {
+      background-color: #db4437;
+    }
+
+    .facebook-btn {
+      background-color: #3b5998;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 400px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* New styles for better aesthetics */
+    .modal-content h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-content input {
+      margin-bottom: 1rem;
+    }
+
+    .modal-content button {
+      background-color: #28a745;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Do you already have an account?</h2>
+    <form id="login-form">
+      <input type="email" placeholder="Email" id="email-input" required>
+      <input type="password" placeholder="Password" id="password-input" minlength="6" required="Password should be atleast 6">
+      <a href="C:\Users\2303a\OneDrive\Desktop\Woodex\woodex-server\forgot-password.html" target="_blank" id="forgot-password-link">Forgotten your password?</a>
+      <button type="submit">LOG IN</button>
+    </form>
+
+    <div class="social-login">
+      <button class="google-btn" id="google-login-btn">Login with Google</button>
+      <button class="facebook-btn" id="facebook-login-btn">Login with Facebook</button>
+    </div>
+
+    <h2>Don't you have an account yet?</h2>
+    <button class="create-account" id="create-account-button">CREATE AN ACCOUNT</button>
+
+    <!-- Modal for creating an account -->
+    <div id="create-account-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Create an Account</h2>
+        <form id="create-account-form">
+          <input type="email" placeholder="Email" id="new-email-input" required>
+          <input type="password" placeholder="Password" id="new-password-input" required>
+          <button type="submit">CREATE ACCOUNT</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Handle account creation form submission
+    document.getElementById('create-account-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newEmail = document.getElementById('new-email-input').value;
+      const newPassword = document.getElementById('new-password-input').value;
+
+      // Save the new account credentials to localStorage
+      localStorage.setItem('email', newEmail);
+      localStorage.setItem('password', newPassword);
+
+      // Close modal after account creation
+      document.getElementById('create-account-modal').style.display = "none";
+      
+      // Optionally redirect to a different page or show success message
+      alert('Account created successfully! You can now log in.');
+    });
+
+    // Handle login form submission
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email-input').value;
+      const password = document.getElementById('password-input').value;
+
+      // Retrieve stored credentials
+      const storedEmail = localStorage.getItem('email');
+      const storedPassword = localStorage.getItem('password');
+
+      // Validate credentials
+      if (email === storedEmail && password === storedPassword) {
+        alert('Login successful!');
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html'; // Redirect to the dashboard
+      } else {
+        alert('Invalid email or password. Please try again.');
+      }
+    });
+
+    // Modal functionality
+    const createAccountModal = document.getElementById('create-account-modal');
+    const createAccountButton = document.getElementById('create-account-button');
+    const closeButton = document.querySelector('.close-button');
+
+    createAccountButton.onclick = function() {
+      createAccountModal.style.display = "block";
+    }
+
+    closeButton.onclick = function() {
+      createAccountModal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == createAccountModal) {
+        createAccountModal.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
